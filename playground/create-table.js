@@ -6,7 +6,8 @@
 
 
 // http://www.luiztools.com.br/post/como-usar-nodejs-mysql/#11
-http://www.luiztools.com.br/post/autenticacao-json-web-token-jwt-em-nodejs/
+// http://www.luiztools.com.br/post/autenticacao-json-web-token-jwt-em-nodejs/
+// https://medium.freecodecamp.org/securing-node-js-restful-apis-with-json-web-tokens-9f811a92bb52
 
 const mysql = require('mysql')
 const connection = mysql.createConnection({
@@ -22,6 +23,8 @@ connection.connect( (err) => {
     console.log('conectou!')
     createTable(connection)
     addRows(connection)
+    createTableUsers(connection)
+    addUsers(connection)
 })
 
 // function createTable(conn) {
@@ -52,3 +55,32 @@ const addRows = (conn) => {
           conn.end();//fecha a conexão
       });
 }
+
+const createTableUsers = (conn) => {
+    const sql = "CREATE TABLE IF NOT EXISTS Users (\n"+
+                "ID int NOT NULL AUTO_INCREMENT,\n"+
+                "USERNAME varchar(150) NOT NULL,\n"+
+                "PASSWORD varchar(150) NOT NULL,\n"+
+                "PRIMARY KEY (ID)\n"+
+                ");";
+
+    conn.query(sql, (error, results, fields) => {
+        if(error) return console.log(error)
+        console.log('criou a tabela users!')
+    })
+}
+
+const addUsers = (conn) => {
+    const sql = "INSERT INTO Users(USERNAME, PASSWORD) VALUES ?";
+    const values = [
+          ['luiz', '123'],
+          ['rodrigo', '456'],
+          ['teste', 'teste2018']
+        ];
+    conn.query(sql, [values], (error, results, fields) => {
+            if(error) return console.log(error);
+            console.log('adicionou registros!');
+            conn.end();//fecha a conexão
+        });
+  }
+  
